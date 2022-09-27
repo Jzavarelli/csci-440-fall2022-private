@@ -14,7 +14,7 @@ public class Homework1 extends DBTest {
      * Write a query in the string below that returns all artists that have an 'A' in their name
      */
     void selectArtistsWhoseNameHasAnAInIt(){
-        List<Map<String, Object>> results = executeSQL("SELECT * FROM artists");
+        List<Map<String, Object>> results = executeSQL("SELECT * FROM artists WHERE artists.name LIKE '%A%'");
         assertEquals(211, results.size());
     }
 
@@ -24,7 +24,7 @@ public class Homework1 extends DBTest {
      */
     void selectAllArtistsWithMoreThanOneAlbum(){
         List<Map<String, Object>> results = executeSQL(
-                "SELECT * FROM artists");
+                "SELECT artists.ArtistId, Name, Count(*) as AlbumCount FROM artists JOIN albums on artists.ArtistId = albums.ArtistId GROUP BY artists.ArtistId HAVING AlbumCount > 1");
 
         assertEquals(56, results.size());
         assertEquals("AC/DC", results.get(0).get("Name"));
@@ -37,8 +37,21 @@ public class Homework1 extends DBTest {
          */
     void selectTheTrackAndAlbumAndArtistForAllTracksLongerThanSixMinutes() {
         List<Map<String, Object>> results = executeSQL(
-                "SELECT tracks.Name as TrackName, albums.Title as AlbumTitle, artists.Name as ArtistsName FROM tracks " +
-                        "-- NEED TO DO SOME JOINS HERE KIDS");
+                "SELECT\n" +
+                        "    sum(tracks.Milliseconds) as Milliseconds,\n" +
+                        "    tracks.Name as TrackName,\n" +
+                        "    albums.Title as AlbumTitle,\n" +
+                        "    artists.Name as ArtistsName\n" +
+                        "FROM\n" +
+                        "    tracks\n" +
+                        "JOIN\n" +
+                        "    albums on tracks.AlbumId = albums.AlbumId\n" +
+                        "JOIN\n" +
+                        "    artists on albums.ArtistId = artists.ArtistId\n" +
+                        "GROUP BY\n" +
+                        "    tracks.TrackId\n" +
+                        "HAVING\n" +
+                        "    Milliseconds > (6 * 60 * 1000)");
 
         assertEquals(623, results.size());
 
