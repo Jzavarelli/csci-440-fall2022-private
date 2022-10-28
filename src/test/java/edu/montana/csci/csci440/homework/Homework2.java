@@ -16,7 +16,7 @@ public class Homework2 extends DBTest {
      */
     public void createTracksPlusView(){
         //TODO fill this in
-        executeDDL("CREATE VIEW tracksPlus");
+        executeDDL("CREATE VIEW tracksPlus AS SELECT tracks.TrackId as TrackId, artists.Name as ArtistName, tracks.name as TrackId, albums.Title as AlbumTitle, genres.Name as GenreName FROM tracks JOIN albums ON tracks.AlbumId = albums.AlbumId JOIN genres ON tracks.GenreId = genres.GenreId JOIN artists ON albums.ArtistId = artists.ArtistId");
 
         List<Map<String, Object>> results = executeSQL("SELECT * FROM tracksPlus ORDER BY TrackId");
         assertEquals(3503, results.size());
@@ -36,8 +36,8 @@ public class Homework2 extends DBTest {
      */
     public void createGrammyInfoTable(){
         //TODO fill these in
-        executeDDL("create table grammy_categories");
-        executeDDL("create table grammy_infos");
+        executeDDL("CREATE TABLE grammy_categories(GrammyCategoryId INTEGER, Name NVARCHAR(60), PRIMARY KEY(GrammyCategoryId));");
+        executeDDL("CREATE TABLE grammy_infos(ArtistId INTEGER, AlbumId INTEGER, TrackId INTEGER, GrammyCategoryId INTEGER, Status NVARCHAR(160), FOREIGN KEY(ArtistId) REFERENCES artists(ArtistId), FOREIGN KEY(AlbumId) REFERENCES albums(AlbumId), FOREIGN KEY(TrackId) REFERENCES tracks(TrackId), FOREIGN KEY(GrammyCategoryId) REFERENCES grammy_categories(GrammyCategoryId));");
 
         // TEST CODE
         executeUpdate("INSERT INTO grammy_categories(Name) VALUES ('Greatest Ever');");
@@ -61,7 +61,7 @@ public class Homework2 extends DBTest {
         Integer before = (Integer) executeSQL("SELECT COUNT(*) as COUNT FROM genres").get(0).get("COUNT");
 
         //TODO fill this in
-        executeUpdate("INSERT");
+        executeUpdate("INSERT INTO genres(Name) VALUES ('Norse Metal'), ('Dub-Step'), ('Country'), ('Death Metal'), ('Video Game Soundtrack');");
 
         Integer after = (Integer) executeSQL("SELECT COUNT(*) as COUNT FROM genres").get(0).get("COUNT");
         assertEquals(before + 5, after);
