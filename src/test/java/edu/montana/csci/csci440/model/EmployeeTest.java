@@ -89,12 +89,18 @@ public class EmployeeTest extends DBTest {
     }
 
     @Test
-    void testEmployeeSalesReport() {
+    void testEmployeeSalesReport()
+    {
         List<Employee.SalesSummary> salesSummaries = Employee.getSalesSummaries();
+
         assertEquals("jane@chinookcorp.com", salesSummaries.get(0).getEmail());
+
         assertEquals(146, salesSummaries.get(0).getSalesCount());
+
         BigDecimal salesTotals = salesSummaries.get(0).getSalesTotals();
+
         salesTotals = salesTotals.setScale(2, RoundingMode.HALF_DOWN);
+
         assertEquals(new BigDecimal("833.04"), salesTotals);
     }
 

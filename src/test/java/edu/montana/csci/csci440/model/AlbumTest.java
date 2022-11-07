@@ -44,6 +44,7 @@ public class AlbumTest extends DBTest {
 
         assertFalse(album.verify());
         // expect a title and artist
+
         assertEquals(2, album.getErrors().size());
 
         album.setTitle("Example");

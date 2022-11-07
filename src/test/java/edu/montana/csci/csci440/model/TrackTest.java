@@ -73,6 +73,7 @@ public class TrackTest extends DBTest {
     void testUpdateWorks() {
         Track track = Track.find(1);
         String newTitle = "A New Name";
+
         track.setName(newTitle);
         track.update();
         assertEquals(newTitle, Track.find(1).getName());

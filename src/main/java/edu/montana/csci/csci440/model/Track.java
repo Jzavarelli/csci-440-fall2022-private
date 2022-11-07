@@ -36,7 +36,7 @@ public class Track extends Model {
         unitPrice = new BigDecimal("0");
     }
 
-    private Track(ResultSet results) throws SQLException {
+    public Track(ResultSet results) throws SQLException {
         name = results.getString("Name");
         milliseconds = results.getLong("Milliseconds");
         bytes = results.getLong("Bytes");
@@ -254,9 +254,14 @@ public class Track extends Model {
     public static List<Track> all(int page, int count, String orderBy) {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT * FROM tracks LIMIT ?"
+                     "SELECT * FROM tracks ORDER BY ? LIMIT ? OFFSET ?"
              )) {
-            stmt.setInt(1, count);
+
+            int offsetNum = (page - 1) * count; // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
+
+            stmt.setString(1, orderBy);
+            stmt.setInt(2, count);
+            stmt.setInt(3, offsetNum);
             ResultSet results = stmt.executeQuery();
             List<Track> resultList = new LinkedList<>();
             while (results.next()) {
@@ -268,4 +273,80 @@ public class Track extends Model {
         }
     }
 
+    @Override
+    public boolean verify()
+    {
+        _errors.clear(); // clear any existing errors
+        if (name == null || "".equals(name)) {
+            addError("Track name can't be null or blank!");
+        }
+        if (albumId == null || "".equals(albumId)) {
+            addError("Album can't be null or blank!");
+        }
+        return !hasErrors();
+    }
+
+    @Override
+    public boolean update()
+    {
+        if (verify())
+        {
+            try (Connection conn = DB.connect();
+                 PreparedStatement stmt = conn.prepareStatement(
+                         "UPDATE tracks SET Name=?, MediaTypeId=?, GenreId=?, Milliseconds=?, Bytes=?, UnitPrice=? WHERE TrackId=?"))
+            {
+                stmt.setString(1, getName());
+                stmt.setLong(2, getMediaTypeId());
+                stmt.setLong(3, getGenreId());
+                stmt.setLong(4, getMilliseconds());
+                stmt.setLong(5, getBytes());
+                stmt.setBigDecimal(6, getUnitPrice());
+
+                stmt.executeUpdate();
+                return true;
+            }
+            catch (SQLException sqlException)
+            {
+                throw new RuntimeException(sqlException);
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean create() {
+        if (verify()) {
+            try (Connection conn = DB.connect();
+                 PreparedStatement stmt = conn.prepareStatement(
+                         "INSERT INTO tracks (Name, MediaTypeId, GenreId, Milliseconds, Bytes, UnitPrice) VALUES (?, ?, ?, ?, ?, ?)")) {
+                stmt.setString(1, getName());
+                stmt.setLong(2, getMediaTypeId());
+                stmt.setLong(3, getGenreId());
+                stmt.setLong(4, getMilliseconds());
+                stmt.setLong(5, getBytes());
+                stmt.setBigDecimal(6, getUnitPrice());
+
+                stmt.executeUpdate();
+                trackId = DB.getLastID(conn);
+                return true;
+            } catch (SQLException sqlException) {
+                throw new RuntimeException(sqlException);
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void delete() {
+        try (Connection conn = DB.connect();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "DELETE FROM tracks WHERE TrackId=?")) {
+            stmt.setLong(1, getTrackId());
+            stmt.executeUpdate();
+        } catch (SQLException sqlException) {
+            throw new RuntimeException(sqlException);
+        }
+    }
 }
