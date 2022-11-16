@@ -11,7 +11,8 @@ public class DB {
 
     private static long CONNECTION_COUNT = 0;
 
-    public static Connection connect() throws SQLException {
+    public static Connection connect() throws SQLException
+    {
         CONNECTION_COUNT++;
         Connection connection = DriverManager.getConnection("jdbc:sqlite:db/chinook.db");
         try (Statement statement = connection.createStatement();){
@@ -43,7 +44,8 @@ public class DB {
         }
     }
 
-    public static long getConnectionCount() {
+    public static long getConnectionCount()
+    {
         return CONNECTION_COUNT;
     }
 }

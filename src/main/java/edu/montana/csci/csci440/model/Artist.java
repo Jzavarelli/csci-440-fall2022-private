@@ -19,7 +19,8 @@ public class Artist extends Model {
     public Artist() {
     }
 
-    private Artist(ResultSet results) throws SQLException {
+    private Artist(ResultSet results) throws SQLException
+    {
         name = results.getString("Name");
         artistId = results.getLong("ArtistId");
     }
@@ -40,7 +41,8 @@ public class Artist extends Model {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name = name;
     }
 
@@ -96,19 +98,33 @@ public class Artist extends Model {
     }
 
     @Override
-    public boolean update() {
-        if (verify()) {
+    public boolean update()
+    {
+        // REDIS Cache - We could Cache the ArtistId Initial Name, which would happen the first run of the system, but the Redis server acts beyond the Update, like a Backup
+        // Jedis redisClient = new Jedis(); // use this class to access redis and create a cache
+        // String stringVal = redisClient.get(REDIS_CACHE_KEY);
+        if (verify())
+        {
+            String oldName = Artist.find(this.getArtistId()).getName();
             try (Connection conn = DB.connect();
                  PreparedStatement stmt = conn.prepareStatement(
-                         "UPDATE artists SET Name=? WHERE ArtistId=?")) {
-                stmt.setString(1, getName());
-                stmt.setLong(2, getArtistId());
+                         "UPDATE artists SET Name=? WHERE Name=? AND ArtistId=?"))
+            {
+                stmt.setString(1, this.getName());
+                stmt.setString(2, oldName); // Limit by the correct Name in the Redis Cache
+                stmt.setLong(3, this.getArtistId());
                 stmt.executeUpdate();
+
+                // Challenge and decide from the Redis Cache and possible row count.
                 return true;
-            } catch (SQLException sqlException) {
+            }
+            catch (SQLException sqlException)
+            {
                 throw new RuntimeException(sqlException);
             }
-        } else {
+        }
+        else
+        {
             return false;
         }
     }

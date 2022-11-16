@@ -18,7 +18,7 @@ public class Playlist extends Model {
     public Playlist() {
     }
 
-    private Playlist(ResultSet results) throws SQLException {
+    public Playlist(ResultSet results) throws SQLException {
         name = results.getString("Name");
         playlistId = results.getLong("PlaylistId");
     }
@@ -27,12 +27,13 @@ public class Playlist extends Model {
     public List<Track> getTracks()
     {
         // TODO implement, order by track name
+
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT * FROM tracks ORDER BY tracks.name LIMIT ?"
-                     ))
+                     "SELECT * FROM tracks" +
+                             " ORDER BY tracks.name"))
         {
-            stmt.setInt(1, Integer.MAX_VALUE);
+            //stmt.setInt(1, Integer.MAX_VALUE);
             ResultSet results = stmt.executeQuery();
             List<Track> resultList = new LinkedList<>();
             while (results.next()) {

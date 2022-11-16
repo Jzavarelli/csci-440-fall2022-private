@@ -30,9 +30,31 @@ public class Employee extends Model {
         title = results.getString("Title");
     }
 
-    public static List<Employee.SalesSummary> getSalesSummaries() {
+    public static List<Employee.SalesSummary> getSalesSummaries()
+    {
         //TODO - a GROUP BY query to determine the sales (look at the invoices table), using the SalesSummary class
-        return Collections.emptyList();
+            try (Connection conn = DB.connect();
+                 PreparedStatement stmt = conn.prepareStatement(
+                         "SELECT *, COUNT(InvoiceId) as SalesCount, SUM(Total) as SalesTotal" +
+                                 " FROM employees" +
+                                 " JOIN customers ON customers.SupportRepId = employees.EmployeeId" +
+                                 " JOIN invoices ON invoices.CustomerId = customers.CustomerId" +
+                                 " GROUP BY employees.Email"))
+            {
+
+                ResultSet results = stmt.executeQuery();
+                List<Employee.SalesSummary> resultList = new LinkedList<>();
+
+                while (results.next())
+                {
+                    resultList.add(new SalesSummary(results));
+                }
+                return resultList;
+            }
+            catch (SQLException sqlException)
+            {
+                throw new RuntimeException(sqlException);
+            }
     }
 
     @Override
@@ -158,9 +180,26 @@ public class Employee extends Model {
             throw new RuntimeException(sqlException);
         }
     }
-    public Employee getBoss() {
-
-        return null;
+    public Employee getBoss()
+    {
+        try (Connection conn = DB.connect();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM employees WHERE EmployeeId=?"))
+        {
+            stmt.setLong(1, this.getReportsTo());
+            ResultSet results = stmt.executeQuery();
+            if (results.next())
+            {
+                return new Employee(results);
+            }
+            else
+            {
+                return null;
+            }
+        }
+        catch (SQLException sqlException)
+        {
+            throw new RuntimeException(sqlException);
+        }
     }
 
     public static List<Employee> all() {
@@ -229,8 +268,13 @@ public class Employee extends Model {
         title = programmer;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public void setReportsTo(Employee employee) {
         // TODO implement
+        reportsTo = employee.getEmployeeId();
     }
 
     public static class SalesSummary {

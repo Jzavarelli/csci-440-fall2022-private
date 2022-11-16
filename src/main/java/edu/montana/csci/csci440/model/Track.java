@@ -62,17 +62,26 @@ public class Track extends Model {
         }
     }
 
-    public static Long count() {
-        Jedis redisClient = new Jedis(); // use this class to access redis and create a cache
+    public static Long count()
+    {
+        // Jedis redisClient = new Jedis(); // use this class to access redis and create a cache
+        // String stringVal = redisClient.get(REDIS_CACHE_KEY);
+
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) as Count FROM tracks")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) as Count FROM tracks"))
+        {
             ResultSet results = stmt.executeQuery();
-            if (results.next()) {
+            if (results.next())
+            {
                 return results.getLong("Count");
-            } else {
+            }
+            else
+            {
                 throw new IllegalStateException("Should find a count!");
             }
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
@@ -87,8 +96,30 @@ public class Track extends Model {
     public Genre getGenre() {
         return null;
     }
-    public List<Playlist> getPlaylists(){
-        return Collections.emptyList();
+    public List<Playlist> getPlaylists()
+    {
+        try (Connection conn = DB.connect();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "SELECT * FROM tracks" +
+                             " JOIN playlist_track ON tracks.TrackId = playlist_track.TrackId" +
+                             " JOIN playlists ON playlist_track.PlaylistId = playlists.PlaylistId" +
+                             " WHERE tracks.TrackId=?"))
+        {
+            stmt.setLong(1, this.getTrackId());
+            ResultSet results = stmt.executeQuery();
+            List<Playlist> resultList = new LinkedList<>();
+
+            while (results.next())
+            {
+                resultList.add(new Playlist(results));
+            }
+
+            return resultList;
+        }
+        catch (SQLException sqlException)
+        {
+            throw new RuntimeException(sqlException);
+        }
     }
 
     public Long getTrackId() {
@@ -162,12 +193,18 @@ public class Track extends Model {
     public String getArtistName() {
         // TODO implement more efficiently
         //  hint: cache on this model object
+        // Jedis redisClient = new Jedis(); // use this class to access redis and create a cache
+        // String stringVal = redisClient.get(REDIS_CACHE_KEY);
+
         return getAlbum().getArtist().getName();
     }
 
     public String getAlbumTitle() {
         // TODO implement more efficiently
         //  hint: cache on this model object
+        // Jedis redisClient = new Jedis(); // use this class to access redis and create a cache
+        // String stringVal = redisClient.get(REDIS_CACHE_KEY);
+
         return getAlbum().getTitle();
     }
 
@@ -183,13 +220,31 @@ public class Track extends Model {
 
         // Here is an example of how to conditionally
         if (artistId != null) {
-            query += " AND ArtistId=? ";
+            query += " AND ArtistId=?";
             args.add(artistId);
         }
+        if (albumId != null) {
+            query += " AND albums.AlbumId=? ";
+            args.add(albumId);
+        }
+        if (maxRuntime != null) {
+            query += " AND Milliseconds<?";
+            args.add(maxRuntime);
+        }
+        if (minRuntime != null) {
+            query += " AND Milliseconds>?";
+            args.add(minRuntime);
+        }
+
 
         //  include the limit (you should include the page too :)
+        // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
+        int offsetNum = (page-1) * count;
+
         query += " LIMIT ?";
         args.add(count);
+        query += " OFFSET ?";
+        args.add(offsetNum);
 
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -251,24 +306,30 @@ public class Track extends Model {
         return all(page, count, "TrackId");
     }
 
-    public static List<Track> all(int page, int count, String orderBy) {
+    public static List<Track> all(int page, int count, String orderBy)
+    {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT * FROM tracks ORDER BY ? LIMIT ? OFFSET ?"
-             )) {
+                     "SELECT * FROM tracks ORDER BY " + orderBy + " LIMIT ? OFFSET ?"))
+        {
 
             int offsetNum = (page - 1) * count; // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
 
-            stmt.setString(1, orderBy);
-            stmt.setInt(2, count);
-            stmt.setInt(3, offsetNum);
+            stmt.setInt(1, count);
+            stmt.setInt(2, offsetNum);
+
             ResultSet results = stmt.executeQuery();
             List<Track> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new Track(results));
             }
+
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
@@ -295,12 +356,13 @@ public class Track extends Model {
                  PreparedStatement stmt = conn.prepareStatement(
                          "UPDATE tracks SET Name=?, MediaTypeId=?, GenreId=?, Milliseconds=?, Bytes=?, UnitPrice=? WHERE TrackId=?"))
             {
-                stmt.setString(1, getName());
-                stmt.setLong(2, getMediaTypeId());
-                stmt.setLong(3, getGenreId());
-                stmt.setLong(4, getMilliseconds());
-                stmt.setLong(5, getBytes());
-                stmt.setBigDecimal(6, getUnitPrice());
+                stmt.setString(1, this.getName());
+                stmt.setLong(2, this.getMediaTypeId());
+                stmt.setLong(3, this.getGenreId());
+                stmt.setLong(4, this.getMilliseconds());
+                stmt.setLong(5, this.getBytes());
+                stmt.setBigDecimal(6, this.getUnitPrice());
+                stmt.setLong(7, this.getTrackId());
 
                 stmt.executeUpdate();
                 return true;
