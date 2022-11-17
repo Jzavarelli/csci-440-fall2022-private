@@ -16,6 +16,8 @@ public class Artist extends Model {
     Long artistId;
     String name;
 
+    String oldName;
+
     public Artist() {
     }
 
@@ -43,6 +45,7 @@ public class Artist extends Model {
 
     public void setName(String name)
     {
+        oldName = this.name;
         this.name = name;
     }
 
@@ -100,23 +103,26 @@ public class Artist extends Model {
     @Override
     public boolean update()
     {
-        // REDIS Cache - We could Cache the ArtistId Initial Name, which would happen the first run of the system, but the Redis server acts beyond the Update, like a Backup
-        // Jedis redisClient = new Jedis(); // use this class to access redis and create a cache
-        // String stringVal = redisClient.get(REDIS_CACHE_KEY);
+
         if (verify())
         {
-            String oldName = Artist.find(this.getArtistId()).getName();
             try (Connection conn = DB.connect();
                  PreparedStatement stmt = conn.prepareStatement(
-                         "UPDATE artists SET Name=? WHERE Name=? AND ArtistId=?"))
+                         "UPDATE artists SET Name=? WHERE ArtistId=? AND Name=?"))
             {
                 stmt.setString(1, this.getName());
-                stmt.setString(2, oldName); // Limit by the correct Name in the Redis Cache
-                stmt.setLong(3, this.getArtistId());
-                stmt.executeUpdate();
+                stmt.setLong(2, this.getArtistId());
+                stmt.setString(3, oldName);
+                int updatedCount = stmt.executeUpdate();
 
-                // Challenge and decide from the Redis Cache and possible row count.
-                return true;
+                if (updatedCount == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (SQLException sqlException)
             {
