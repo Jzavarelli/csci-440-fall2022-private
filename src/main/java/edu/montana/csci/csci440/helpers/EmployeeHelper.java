@@ -3,6 +3,7 @@ package edu.montana.csci.csci440.helpers;
 import edu.montana.csci.csci440.model.Employee;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +19,17 @@ public class EmployeeHelper {
         Map<Long, List<Employee>> employeeMap = new HashMap<>();
         for (Employee currentEmployee : all)
         {
-            employeeMap.put(currentEmployee.getEmployeeId(), currentEmployee.getReports());
-            // create a map of id-> all employees that report to that id.
+            List<Employee> subEmployees = new LinkedList<>();
+
+            for (Employee newEmployee : all)
+            {
+                if (newEmployee.getReportsTo().equals(currentEmployee.getEmployeeId()))
+                {
+                    subEmployees.add(newEmployee);
+                }
+            }
+
+            employeeMap.put(currentEmployee.getEmployeeId(), subEmployees);
         }
 
         return "<ul>" + makeTree(employee, employeeMap) + "</ul>";

@@ -29,10 +29,12 @@ public class Playlist extends Model {
         // TODO implement, order by track name
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT tracks.Name, * FROM playlists" +
+                     "SELECT tracks.Name AS Name, Milliseconds, Bytes, UnitPrice, tracks.TrackId, tracks.AlbumId, MediaTypeId, GenreId, artists.Name AS ArtistName, Title" +
+                             " FROM playlists" +
                              " JOIN playlist_track ON playlists.PlaylistId = playlist_track.PlaylistId" +
                              " JOIN tracks ON playlist_track.TrackId = tracks.TrackId" +
                              " JOIN albums ON tracks.AlbumId = albums.AlbumId" +
+                             " JOIN artists ON albums.ArtistId = artists.ArtistId" +
                              " WHERE playlists.PlaylistId LIKE 3" +
                              " ORDER BY tracks.name"))
         {

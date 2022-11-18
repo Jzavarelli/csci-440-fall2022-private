@@ -49,14 +49,16 @@ public class Track extends Model
         albumId = results.getLong("AlbumId");
         mediaTypeId = results.getLong("MediaTypeId");
         genreId = results.getLong("GenreId");
-        artistName = results.getString("Name");
+        artistName = results.getString("ArtistName");
         albumTitle = results.getString("Title");
     }
 
     public static Track find(long i)
     {
+        //SELECT -> tracks.Name AS Name, Milliseconds, Bytes, UnitPrice, TrackId, tracks.AlbumId, MediaTypeId, GenreId, artists.Name AS ArtistName, Title
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM tracks" +
+             PreparedStatement stmt = conn.prepareStatement("SELECT tracks.Name AS Name, Milliseconds, Bytes, UnitPrice, TrackId, tracks.AlbumId, MediaTypeId, GenreId, artists.Name AS ArtistName, Title" +
+                     " FROM tracks" +
                      " JOIN albums ON tracks.AlbumId = albums.AlbumId" +
                      " JOIN artists ON albums.ArtistId = artists.ArtistId" +
                      " WHERE TrackId=?"))
@@ -80,17 +82,21 @@ public class Track extends Model
 
     public static Long count()
     {
-//         Jedis redisClient = new Jedis(); // use this class to access redis and create a cache
-//         String currCacheVal = redisClient.get(REDIS_CACHE_KEY);
-//
-//         if (!currCacheVal.equals(null))
-//         {
-//
-//         }
+         Jedis redisClient = new Jedis(); // use this class to access redis and create a cache
+         String currCacheVal = redisClient.get(REDIS_CACHE_KEY);
 
+         if (currCacheVal != null)
+         {
+            long currCacheVal_Long = Long.parseLong(currCacheVal);
+            return currCacheVal_Long;
+         }
+         else
+         {
+             redisClient.set("A", String.valueOf(queryCount()));
+             return Long.parseLong(redisClient.get("A"));
 
-
-        return queryCount();
+             // return queryCount();
+         }
     }
 
     public static Long queryCount()
@@ -227,14 +233,16 @@ public class Track extends Model
                                              Integer maxRuntime, Integer minRuntime) {
         LinkedList<Object> args = new LinkedList<>();
 
-        String query = "SELECT * FROM tracks " +
-                "JOIN albums ON tracks.AlbumId = albums.AlbumId " +
-                "WHERE name LIKE ?";
+        String query = "SELECT tracks.Name AS Name, Milliseconds, Bytes, UnitPrice, TrackId, tracks.AlbumId, MediaTypeId, GenreId, artists.Name AS ArtistName, Title" +
+                " FROM tracks" +
+                " JOIN albums ON tracks.AlbumId = albums.AlbumId" +
+                " JOIN artists ON albums.ArtistId = artists.ArtistId" +
+                " WHERE tracks.name LIKE ?";
         args.add("%" + search + "%");
 
         // Here is an example of how to conditionally
         if (artistId != null) {
-            query += " AND ArtistId=?";
+            query += " AND artists.ArtistId=?";
             args.add(artistId);
         }
         if (albumId != null) {
@@ -324,7 +332,8 @@ public class Track extends Model
     {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT * FROM tracks" +
+                     "SELECT tracks.Name AS Name, Milliseconds, Bytes, UnitPrice, TrackId, tracks.AlbumId, MediaTypeId, GenreId, artists.Name AS ArtistName, Title" +
+                             " FROM tracks" +
                              " JOIN albums ON tracks.AlbumId = albums.AlbumId" +
                              " JOIN artists ON albums.ArtistId = artists.ArtistId" +
                              " ORDER BY " + orderBy + " LIMIT ? OFFSET ?"))
