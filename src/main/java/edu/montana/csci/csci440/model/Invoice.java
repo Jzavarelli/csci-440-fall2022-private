@@ -116,7 +116,9 @@ public class Invoice extends Model {
 
     public static Invoice find(long invoiceId) {
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM invoices WHERE InvoiceId=?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM invoices" +
+                     " JOIN invoice_items ON invoices.InvoiceId = invoice_items.InvoiceId" +
+                     " WHERE invoices.InvoiceId=?")) {
             stmt.setLong(1, invoiceId);
             ResultSet results = stmt.executeQuery();
             if (results.next()) {

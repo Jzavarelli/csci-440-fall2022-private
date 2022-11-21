@@ -83,20 +83,17 @@ public class Track extends Model
     public static Long count()
     {
          Jedis redisClient = new Jedis(); // use this class to access redis and create a cache
+
+         String nullTemp = "gamer";
          String currCacheVal = redisClient.get(REDIS_CACHE_KEY);
 
-         if (currCacheVal != null)
+         if (currCacheVal == null || currCacheVal.equals(nullTemp)) // Create a fake Null
          {
-            long currCacheVal_Long = Long.parseLong(currCacheVal);
-            return currCacheVal_Long;
+            redisClient.set(REDIS_CACHE_KEY, String.valueOf(queryCount()));
+            currCacheVal = redisClient.get(REDIS_CACHE_KEY);
          }
-         else
-         {
-             redisClient.set("A", String.valueOf(queryCount()));
-             return Long.parseLong(redisClient.get("A"));
 
-             // return queryCount();
-         }
+         return Long.parseLong(currCacheVal);
     }
 
     public static Long queryCount()
@@ -403,11 +400,15 @@ public class Track extends Model
     }
 
     @Override
-    public boolean create() {
-        if (verify()) {
+    public boolean create()
+    {
+        if (verify())
+        {
             try (Connection conn = DB.connect();
                  PreparedStatement stmt = conn.prepareStatement(
-                         "INSERT INTO tracks (Name, MediaTypeId, GenreId, Milliseconds, Bytes, UnitPrice) VALUES (?, ?, ?, ?, ?, ?)")) {
+                         "INSERT INTO tracks (Name, MediaTypeId, GenreId, Milliseconds, Bytes, UnitPrice) VALUES (?, ?, ?, ?, ?, ?)"))
+            {
+
                 stmt.setString(1, getName());
                 stmt.setLong(2, getMediaTypeId());
                 stmt.setLong(3, getGenreId());
@@ -417,6 +418,11 @@ public class Track extends Model
 
                 stmt.executeUpdate();
                 trackId = DB.getLastID(conn);
+
+                Jedis redisClient = new Jedis();
+                redisClient.del(REDIS_CACHE_KEY);
+                redisClient.set(REDIS_CACHE_KEY, "gamer");
+
                 return true;
             } catch (SQLException sqlException) {
                 throw new RuntimeException(sqlException);

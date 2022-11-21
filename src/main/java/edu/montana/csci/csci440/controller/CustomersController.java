@@ -8,8 +8,10 @@ import java.util.List;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-public class CustomersController {
-    public static void init(){
+public class CustomersController
+{
+    public static void init()
+    {
         /* READ */
         get("/customers", (req, resp) -> {
             List<Customer> customers = Customer.all(Web.getPage(), Web.PAGE_SIZE);

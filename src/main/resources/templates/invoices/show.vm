@@ -48,7 +48,7 @@
     </tr>
     </thead>
     <tbody>
-        #foreach( $item in $invoice.InvoiceItems )
+        #foreach( $item in $invoice )
         <tr>
             <td>$!item.InvoiceLineId</td>
             <td>$!item.TrackId</td>

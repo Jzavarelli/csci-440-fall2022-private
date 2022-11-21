@@ -8,8 +8,10 @@ import java.util.List;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-public class PlaylistsController {
-    public static void init() {
+public class PlaylistsController
+{
+    public static void init()
+    {
         /* READ */
         get("/playlists", (req, resp) -> {
             List<Playlist> playlists = Playlist.all(Web.getPage(), Web.PAGE_SIZE);

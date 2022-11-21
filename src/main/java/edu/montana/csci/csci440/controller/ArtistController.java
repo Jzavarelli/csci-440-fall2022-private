@@ -9,8 +9,10 @@ import java.util.List;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-public class ArtistController {
-    public static void init() {
+public class ArtistController
+{
+    public static void init()
+    {
         /* CREATE */
         get("/artists/new", (req, resp) -> {
             Artist artist = new Artist();

@@ -10,8 +10,10 @@ import java.util.List;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-public class TracksController {
-    public static void init() {
+public class TracksController
+{
+    public static void init()
+    {
         /* CREATE */
         get("/tracks/new", (req, resp) -> {
             Track track = new Track();

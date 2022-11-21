@@ -53,11 +53,13 @@ public class Artist extends Model {
         return all(0, Integer.MAX_VALUE);
     }
 
-    public static List<Artist> all(int page, int count) {
+    public static List<Artist> all(int page, int count)
+    {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
                      "SELECT * FROM artists LIMIT ? OFFSET ?"
-             )) {
+             ))
+        {
 
             int offsetNum = (page - 1) * count; // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
 
@@ -65,11 +67,14 @@ public class Artist extends Model {
             stmt.setInt(2, offsetNum);
             ResultSet results = stmt.executeQuery();
             List<Artist> resultList = new LinkedList<>();
-            while (results.next()) {
+            while (results.next())
+            {
                 resultList.add(new Artist(results));
             }
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }

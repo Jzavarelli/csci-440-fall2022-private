@@ -8,8 +8,10 @@ import java.util.List;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-public class AlbumsController {
-    public static void init(){
+public class AlbumsController
+{
+    public static void init()
+    {
         /* CREATE */
         get("/albums/new", (req, resp) -> {
             Album album = new Album();

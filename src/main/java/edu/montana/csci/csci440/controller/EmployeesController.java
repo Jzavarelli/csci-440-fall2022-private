@@ -9,8 +9,10 @@ import java.util.List;
 import static spark.Spark.get;
 import static spark.Spark.post;
 
-public class EmployeesController {
-    public static void init(){
+public class EmployeesController
+{
+    public static void init()
+    {
         /* CREATE */
         get("/employees/new", (req, resp) -> {
             Employee employee = new Employee();
