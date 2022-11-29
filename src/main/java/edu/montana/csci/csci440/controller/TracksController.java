@@ -4,9 +4,7 @@ import edu.montana.csci.csci440.model.Artist;
 import edu.montana.csci.csci440.model.Track;
 import edu.montana.csci.csci440.util.Web;
 import redis.clients.jedis.Jedis;
-
 import java.util.List;
-
 import static spark.Spark.get;
 import static spark.Spark.post;
 
@@ -18,19 +16,25 @@ public class TracksController
         get("/tracks/new", (req, resp) -> {
             Track track = new Track();
             return Web.renderTemplate("templates/tracks/new.vm", "album", track);
+
         });
 
         post("/tracks/new", (req, resp) -> {
             Track track = new Track();
             Web.putValuesInto(track, "Name", "Milliseconds", "Bytes", "UnitPrice");
-            if (track.create()) {
+
+            if (track.create())
+            {
                 Web.message("Created A Track!");
                 return Web.redirect("/tracks/" + track.getTrackId());
-            } else {
+            }
+            else
+            {
                 Web.error("Could Not Create A Track!");
                 return Web.renderTemplate("templates/tracks/new.vm",
                         "track", track);
             }
+
         });
 
         /* READ */
@@ -38,16 +42,20 @@ public class TracksController
             String search = req.queryParams("q");
             String orderBy = req.queryParams("o");
             List<Track> tracks;
-            if (search != null) {
+
+            if (search != null)
+            {
                 tracks = Track.search(Web.getPage(), Web.PAGE_SIZE, orderBy, search);
-            } else {
+            }
+            else
+            {
                 tracks = Track.all(Web.getPage(), Web.PAGE_SIZE, orderBy);
             }
-            // TODO - implement cache of count w/ Redis
+            // COMPLETE - implement cache of count w/ Redis
             long totalTracks = Track.count();
-
             return Web.renderTemplate("templates/tracks/index.vm",
                     "tracks", tracks, "totalTracks", totalTracks);
+
         });
 
         get("/tracks/search", (req, resp) -> {
@@ -59,14 +67,17 @@ public class TracksController
                     Web.integerOrNull("AlbumId"),
                     Web.integerOrNull("max"),
                     Web.integerOrNull("min"));
+
             return Web.renderTemplate("templates/tracks/search.vm",
                     "tracks", tracks);
+
         });
 
         get("/tracks/:id", (req, resp) -> {
             Track track = Track.find(Integer.parseInt(req.params(":id")));
             return Web.renderTemplate("templates/tracks/show.vm",
                     "track", track);
+
         });
 
         /* UPDATE */
@@ -74,19 +85,26 @@ public class TracksController
             Track track = Track.find(Integer.parseInt(req.params(":id")));
             return Web.renderTemplate("templates/tracks/edit.vm",
                     "track", track);
+
         });
 
         post("/tracks/:id", (req, resp) -> {
             Track track = Track.find(Integer.parseInt(req.params(":id")));
             Web.putValuesInto(track, "Name", "Milliseconds", "Bytes", "UnitPrice");
-            if (track.update()) {
+
+            if (track.update())
+            {
                 Web.message("Updated Track!");
                 return Web.redirect("/tracks/" + track.getTrackId());
-            } else {
+            }
+            else
+            {
                 Web.error("Could Not Update Track!");
                 return Web.renderTemplate("templates/tracks/edit.vm",
                         "track", track);
+
             }
+
         });
 
         /* DELETE */
@@ -95,6 +113,7 @@ public class TracksController
             track.delete();
             Web.message("Deleted Track " + track.getName());
             return Web.redirect("/tracks");
+
         });
     }
 }

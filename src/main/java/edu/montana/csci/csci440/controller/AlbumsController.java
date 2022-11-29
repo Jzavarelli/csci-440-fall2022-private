@@ -16,19 +16,25 @@ public class AlbumsController
         get("/albums/new", (req, resp) -> {
             Album album = new Album();
             return Web.renderTemplate("templates/albums/new.vm", "album", album);
+
         });
 
         post("/albums/new", (req, resp) -> {
             Album album = new Album();
             Web.putValuesInto(album, "Title");
-            if (album.create()) {
+
+            if (album.create())
+            {
                 Web.message("Created A Album!");
                 return Web.redirect("/albums/" + album.getAlbumId());
-            } else {
+            }
+            else
+            {
                 Web.error("Could Not Create A Album!");
                 return Web.renderTemplate("templates/albums/new.vm",
                         "album", album);
             }
+
         });
 
         /* READ */
@@ -36,12 +42,14 @@ public class AlbumsController
             List<Album> albums = Album.all(Web.getPage(), Web.PAGE_SIZE);
             return Web.renderTemplate("templates/albums/index.vm",
                     "albums", albums);
+
         });
 
         get("/albums/:id", (req, resp) -> {
             Album album = Album.find(Integer.parseInt(req.params(":id")));
             return Web.renderTemplate("templates/albums/show.vm",
                     "album", album);
+
         });
 
         /* UPDATE */
@@ -49,19 +57,25 @@ public class AlbumsController
             Album album = Album.find(Integer.parseInt(req.params(":id")));
             return Web.renderTemplate("templates/albums/edit.vm",
                     "album", album);
+
         });
 
         post("/albums/:id", (req, resp) -> {
             Album album = Album.find(Integer.parseInt(req.params(":id")));
             Web.putValuesInto(album, "Title");
-            if (album.update()) {
+
+            if (album.update())
+            {
                 Web.message("Updated Album!");
                 return Web.redirect("/albums/" + album.getAlbumId());
-            } else {
+            }
+            else
+            {
                 Web.error("Could Not Update Album!");
                 return Web.renderTemplate("templates/albums/edit.vm",
                         "album", album);
             }
+
         });
 
         /* DELETE */
@@ -70,6 +84,7 @@ public class AlbumsController
             album.delete();
             Web.message("Deleted Album " + album.getTitle());
             return Web.redirect("/albums");
+
         });
     }
 }

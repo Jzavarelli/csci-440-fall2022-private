@@ -165,8 +165,28 @@ public class Album extends Model {
         }
     }
 
-    public static List<Album> getForArtist(Long artistId) {
-        return Collections.emptyList();
+    public static List<Album> getForArtist(Long artistId)
+    {
+        try (Connection conn = DB.connect();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM albums" +
+                     " JOIN artists ON albums.ArtistId = artists.ArtistId" +
+                     " WHERE artists.ArtistId=?"))
+        {
+
+            stmt.setLong(1, artistId);
+            ResultSet results = stmt.executeQuery();
+            List<Album> resultList = new LinkedList<>();
+
+            while (results.next())
+            {
+                resultList.add(new Album(results));
+            }
+            return resultList;
+        }
+        catch (SQLException sqlException)
+        {
+            throw new RuntimeException(sqlException);
+        }
     }
 
 }

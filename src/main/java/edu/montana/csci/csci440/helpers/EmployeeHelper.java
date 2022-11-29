@@ -7,11 +7,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class EmployeeHelper {
-
+public class EmployeeHelper
+{
     public static String makeEmployeeTree()
     {
-        // TODO, change this to use a single query operation to get all employees
+        // COMPLETE, change this to use a single query operation to get all employees
         Employee employee = Employee.find(1); // root employee
         // and use this data structure to maintain reference information needed to build the tree structure
 
@@ -31,11 +31,10 @@ public class EmployeeHelper {
 
             employeeMap.put(currentEmployee.getEmployeeId(), subEmployees);
         }
-
         return "<ul>" + makeTree(employee, employeeMap) + "</ul>";
     }
 
-    // TODO - currently this method just uses the employee.getReports() function, which
+    // COMPLETE - currently this method just uses the employee.getReports() function, which
     //  issues a query.  Change that to use the employeeMap variable instead
     public static String makeTree(Employee employee, Map<Long, List<Employee>> employeeMap)
     {
@@ -47,7 +46,6 @@ public class EmployeeHelper {
         {
             list += makeTree(report, employeeMap);
         }
-
         return list + "</ul></li>";
     }
 }

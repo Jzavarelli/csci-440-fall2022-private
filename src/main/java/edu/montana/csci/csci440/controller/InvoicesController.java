@@ -17,12 +17,14 @@ public class InvoicesController
             List<Invoice> invoices = Invoice.all(Web.getPage(), Web.PAGE_SIZE);
             return Web.renderTemplate("templates/invoices/index.vm",
                     "invoices", invoices);
+
         });
 
         get("/invoices/:id", (req, resp) -> {
             Invoice invoice = Invoice.find(Integer.parseInt(req.params(":id")));
             return Web.renderTemplate("templates/invoices/show.vm",
                     "invoice", invoice);
+
         });
     }
 }

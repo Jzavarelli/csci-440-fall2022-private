@@ -17,19 +17,25 @@ public class EmployeesController
         get("/employees/new", (req, resp) -> {
             Employee employee = new Employee();
             return Web.renderTemplate("templates/employees/new.vm", "employee", employee);
+
         });
 
         post("/employees/new", (req, resp) -> {
             Employee emp = new Employee();
             Web.putValuesInto(emp, "FirstName", "LastName");
-            if (emp.create()) {
+
+            if (emp.create())
+            {
                 Web.message("Created An Employee!");
                 return Web.redirect("/employees/" + emp.getEmployeeId());
-            } else {
+            }
+            else
+            {
                 Web.error("Could Not Create An Employee!");
                 return Web.renderTemplate("templates/employees/new.vm",
                         "employee", emp);
             }
+
         });
 
         /* READ */
@@ -37,24 +43,28 @@ public class EmployeesController
             List<Employee> employees = Employee.all(1, Web.PAGE_SIZE);
             return Web.renderTemplate("templates/employees/index.vm",
                     "employees", employees);
+
         });
 
         get("/employees/tree", (request, response) -> {
             String employeeTree = EmployeeHelper.makeEmployeeTree();
             return Web.renderTemplate("templates/employees/tree.vm",
                     "employeeTree", employeeTree);
+
         });
 
         get("/employees/sales", (request, response) -> {
             List<Employee.SalesSummary> salesInfo = Employee.getSalesSummaries();
             return Web.renderTemplate("templates/employees/sales.vm",
                     "salesInfo", salesInfo);
+
         });
 
         get("/employees/:id", (req, resp) -> {
             Employee employee = Employee.find(Integer.parseInt(req.params(":id")));
             return Web.renderTemplate("templates/employees/show.vm",
                     "employee", employee);
+
         });
 
         /* UPDATE */
@@ -62,19 +72,25 @@ public class EmployeesController
             Employee employee = Employee.find(Integer.parseInt(req.params(":id")));
             return Web.renderTemplate("templates/employees/edit.vm",
                     "employee", employee);
+
         });
 
         post("/employees/:id", (req, resp) -> {
             Employee emp = Employee.find(Integer.parseInt(req.params(":id")));
             Web.putValuesInto(emp, "FirstName", "LastName");
-            if (emp.update()) {
+
+            if (emp.update())
+            {
                 Web.message("Updated Employee!");
                 return Web.redirect("/employees/" + emp.getEmployeeId());
-            } else {
+            }
+            else
+            {
                 Web.error("Could Not Update Employee!");
                 return Web.renderTemplate("templates/employees/edit.vm",
                         "employee", emp);
             }
+
         });
 
         /* DELETE */
@@ -83,6 +99,7 @@ public class EmployeesController
             employee.delete();
             Web.message("Deleted Employee " + employee.getEmail());
             return Web.redirect("/employees");
+
         });
     }
 }

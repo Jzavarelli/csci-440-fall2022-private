@@ -33,9 +33,28 @@ public class Invoice extends Model {
         invoiceId = results.getLong("InvoiceId");
     }
 
-    public List<InvoiceItem> getInvoiceItems(){
-        //TODO implement
-        return Collections.emptyList();
+    public List<InvoiceItem> getInvoiceItems()
+    {
+        try (Connection conn = DB.connect();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM invoices" +
+                     " JOIN invoice_items ON invoices.InvoiceId = invoice_items.InvoiceId" +
+                     " GROUP BY invoices.InvoiceId"))
+        {
+
+            ResultSet results = stmt.executeQuery();
+            List<InvoiceItem> resultList = new LinkedList<>();
+
+            while (results.next())
+            {
+                resultList.add(new InvoiceItem());
+            }
+            return resultList;
+        }
+        catch (SQLException sqlException)
+        {
+            throw new RuntimeException(sqlException);
+        }
+
     }
     public Customer getCustomer() {
         return null;

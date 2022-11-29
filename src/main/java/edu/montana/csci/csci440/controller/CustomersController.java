@@ -17,12 +17,14 @@ public class CustomersController
             List<Customer> customers = Customer.all(Web.getPage(), Web.PAGE_SIZE);
             return Web.renderTemplate("templates/customers/index.vm",
                     "customers", customers);
+
         });
 
         get("/customers/:id", (req, resp) -> {
             Customer customer = Customer.find(Integer.parseInt(req.params(":id")));
             return Web.renderTemplate("templates/customers/show.vm",
                     "customer", customer);
+
         });
     }
 }

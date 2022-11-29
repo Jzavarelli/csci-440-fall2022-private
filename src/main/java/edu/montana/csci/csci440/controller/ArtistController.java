@@ -17,19 +17,25 @@ public class ArtistController
         get("/artists/new", (req, resp) -> {
             Artist artist = new Artist();
             return Web.renderTemplate("templates/artists/new.vm", "artist", artist);
+
         });
 
         post("/artists/new", (req, resp) -> {
             Artist artist = new Artist();
             Web.putValuesInto(artist, "Name");
-            if (artist.create()) {
+
+            if (artist.create())
+            {
                 Web.message("Created An Artist!");
                 return Web.redirect("/artists/" + artist.getArtistId());
-            } else {
+            }
+            else
+            {
                 Web.error("Could Not Create An Artist!");
                 return Web.renderTemplate("templates/artists/new.vm",
                         "artist", artist);
             }
+
         });
 
         /* READ */
@@ -37,12 +43,14 @@ public class ArtistController
             List<Artist> artists = Artist.all(Web.getPage(), Web.PAGE_SIZE);
             return Web.renderTemplate("templates/artists/index.vm",
                     "artists", artists);
+
         });
 
         get("/artists/:id", (req, resp) -> {
             Artist artist = Artist.find(Integer.parseInt(req.params(":id")));
             return Web.renderTemplate("templates/artists/show.vm",
                     "artist", artist);
+
         });
 
         /* UPDATE */
@@ -50,19 +58,25 @@ public class ArtistController
             Artist artist = Artist.find(Integer.parseInt(req.params(":id")));
             return Web.renderTemplate("templates/artists/edit.vm",
                     "artist", artist);
+
         });
 
         post("/artists/:id", (req, resp) -> {
             Artist artist = Artist.find(Integer.parseInt(req.params(":id")));
             Web.putValuesInto(artist, "Name");
-            if (artist.update()) {
+
+            if (artist.update())
+            {
                 Web.message("Updated Artist!");
                 return Web.redirect("/artists/" + artist.getArtistId());
-            } else {
+            }
+            else
+            {
                 Web.error("Could Not Update Artist!");
                 return Web.renderTemplate("templates/artists/edit.vm",
                         "artist", artist);
             }
+
         });
 
         /* DELETE */
@@ -71,6 +85,7 @@ public class ArtistController
             artist.delete();
             Web.message("Deleted Artist " + artist.getName());
             return Web.redirect("/artists");
+
         });
     }
 }

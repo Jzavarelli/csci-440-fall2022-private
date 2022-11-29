@@ -13,7 +13,8 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Homework3 extends DBTest {
+public class Homework3 extends DBTest
+{
 
     @Test
     /*
@@ -24,14 +25,16 @@ public class Homework3 extends DBTest {
      *   https://docs.oracle.com/javase/tutorial/jdbc/basics/transactions.html
      *
      */
-    public void useATransactionToSafelyMoveMillisecondsFromOneTrackToAnother() throws SQLException {
+    public void useATransactionToSafelyMoveMillisecondsFromOneTrackToAnother() throws SQLException
+    {
 
         Track track1 = Track.find(1);
         Long track1InitialTime = track1.getMilliseconds();
         Track track2 = Track.find(2);
         Long track2InitialTime = track2.getMilliseconds();
 
-        try(Connection connection = DB.connect()){
+        try(Connection connection = DB.connect())
+        {
             connection.setAutoCommit(false);
             PreparedStatement subtract = connection.prepareStatement("TODO");
             subtract.setLong(1, 0);
@@ -63,7 +66,8 @@ public class Homework3 extends DBTest {
      *         in this result.  It should only include the albums of the tracks found in the first
      *         query.
      * */
-    public void selectPopularTracksAndTheirAlbums() throws SQLException {
+    public void selectPopularTracksAndTheirAlbums() throws SQLException
+    {
 
         // HINT: join to invoice items and do a group by/having to get the right answer
         List<Map<String, Object>> tracks = executeSQL("");
@@ -82,7 +86,8 @@ public class Homework3 extends DBTest {
      *
      * Please use an IN clause and a sub-select to generate customer IDs satisfying the criteria
      * */
-    public void selectCustomersMeetingCriteria() throws SQLException {
+    public void selectCustomersMeetingCriteria() throws SQLException
+    {
         // HINT: join to invoice items and do a group by/having to get the right answer
         List<Map<String, Object>> tracks = executeSQL("" );
         assertEquals(21, tracks.size());
