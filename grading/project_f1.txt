@@ -25,132 +25,65 @@
 [INFO] -------------------------------------------------------
 [INFO] Running edu.montana.csci.csci440.model.InvoicesTest
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
-[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.357 s - in edu.montana.csci.csci440.model.InvoicesTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.412 s - in edu.montana.csci.csci440.model.InvoicesTest
 [INFO] Running edu.montana.csci.csci440.model.TrackTest
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
-[ERROR] Tests run: 12, Failures: 0, Errors: 3, Skipped: 0, Time elapsed: 0.061 s <<< FAILURE! - in edu.montana.csci.csci440.model.TrackTest
-[ERROR] testDeleteWorks  Time elapsed: 0.006 s  <<< ERROR!
-redis.clients.jedis.exceptions.JedisDataException: MISCONF Redis is configured to save RDB snapshots, but it's currently unable to persist to disk. Commands that may modify the data set are disabled, because this instance is configured to report errors during writes if RDB snapshotting fails (stop-writes-on-bgsave-error option). Please check the Redis logs for details about the RDB error.
-	at edu.montana.csci.csci440.model.TrackTest.testDeleteWorks(TrackTest.java:50)
-
-[ERROR] testCreateWorks  Time elapsed: 0.003 s  <<< ERROR!
-redis.clients.jedis.exceptions.JedisDataException: MISCONF Redis is configured to save RDB snapshots, but it's currently unable to persist to disk. Commands that may modify the data set are disabled, because this instance is configured to report errors during writes if RDB snapshotting fails (stop-writes-on-bgsave-error option). Please check the Redis logs for details about the RDB error.
-	at edu.montana.csci.csci440.model.TrackTest.testCreateWorks(TrackTest.java:36)
-
-[ERROR] trackCountIsCachedInRedis  Time elapsed: 0.003 s  <<< ERROR!
-redis.clients.jedis.exceptions.JedisDataException: MISCONF Redis is configured to save RDB snapshots, but it's currently unable to persist to disk. Commands that may modify the data set are disabled, because this instance is configured to report errors during writes if RDB snapshotting fails (stop-writes-on-bgsave-error option). Please check the Redis logs for details about the RDB error.
-	at edu.montana.csci.csci440.model.TrackTest.trackCountIsCachedInRedis(TrackTest.java:116)
-
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.072 s - in edu.montana.csci.csci440.model.TrackTest
 [INFO] Running edu.montana.csci.csci440.model.PlaylistsTest
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
-[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s - in edu.montana.csci.csci440.model.PlaylistsTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s - in edu.montana.csci.csci440.model.PlaylistsTest
 [INFO] Running edu.montana.csci.csci440.model.AlbumTest
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
-[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s - in edu.montana.csci.csci440.model.AlbumTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 s - in edu.montana.csci.csci440.model.AlbumTest
 [INFO] Running edu.montana.csci.csci440.model.EmployeeTest
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
-[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.04 s - in edu.montana.csci.csci440.model.EmployeeTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.037 s - in edu.montana.csci.csci440.model.EmployeeTest
 [INFO] Running edu.montana.csci.csci440.model.ArtistTest
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
-[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.021 s - in edu.montana.csci.csci440.model.ArtistTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s - in edu.montana.csci.csci440.model.ArtistTest
 [INFO] Running edu.montana.csci.csci440.model.CustomerTest
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
 Resetting DB After Test...
-No redis found to reset
-[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.01 s - in edu.montana.csci.csci440.model.CustomerTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s - in edu.montana.csci.csci440.model.CustomerTest
 [INFO] 
 [INFO] Results:
 [INFO] 
-[ERROR] Errors: 
-[ERROR]   TrackTest.testCreateWorks:36 » JedisData MISCONF Redis is configured to save R...
-[ERROR]   TrackTest.testDeleteWorks:50 » JedisData MISCONF Redis is configured to save R...
-[ERROR]   TrackTest.trackCountIsCachedInRedis:116 » JedisData MISCONF Redis is configure...
-[INFO] 
-[ERROR] Tests run: 39, Failures: 0, Errors: 3, Skipped: 0
+[INFO] Tests run: 39, Failures: 0, Errors: 0, Skipped: 0
 [INFO] 
 [INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
+[INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  1.695 s
-[INFO] Finished at: 2022-11-29T08:06:25-07:00
+[INFO] Total time:  1.693 s
+[INFO] Finished at: 2022-11-29T09:41:44-07:00
 [INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.22.1:test (default-test) on project CSCI_440_Project: There are test failures.
-[ERROR] 
-[ERROR] Please refer to /Users/carson/Projects/msu/demo/csci-440-fall2022-private/grading/scripts/repos/jace_zavarelli/target/surefire-reports for the individual test results.
-[ERROR] Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
-[ERROR] -> [Help 1]
-[ERROR] 
-[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
-[ERROR] Re-run Maven using the -X switch to enable full debug logging.
-[ERROR] 
-[ERROR] For more information about the errors and possible solutions, please read the following articles:
-[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
