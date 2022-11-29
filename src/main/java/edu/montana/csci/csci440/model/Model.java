@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 
 // base class for entities
-public class Model {
-
+public class Model
+{
     List<String> _errors = new LinkedList<>();
 
     public boolean create() {
@@ -40,21 +40,30 @@ public class Model {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object obj)
+    {
+        if (obj == null)
+        {
             return  false;
         }
-        if (obj.getClass() != this.getClass()) {
+        if (obj.getClass() != this.getClass())
+        {
             return false;
         }
         Field[] declaredFields = this.getClass().getDeclaredFields();
-        for (Field declaredField : declaredFields) {
+
+        for (Field declaredField : declaredFields)
+        {
             declaredField.setAccessible(true);
-            try {
-                if (!Objects.equals(declaredField.get(this), (declaredField.get(obj)))) {
+            try
+            {
+                if (!Objects.equals(declaredField.get(this), (declaredField.get(obj))))
+                {
                     return false;
                 }
-            } catch (IllegalAccessException e) {
+            }
+            catch (IllegalAccessException e)
+            {
                 e.printStackTrace();
                 return false;
             }
@@ -63,14 +72,20 @@ public class Model {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         Field[] declaredFields = this.getClass().getDeclaredFields();
         List<Object> values = new LinkedList<>();
-        for (Field declaredField : declaredFields) {
+
+        for (Field declaredField : declaredFields)
+        {
             declaredField.setAccessible(true);
-            try {
+            try
+            {
                 values.add(declaredField.get(this));
-            } catch (IllegalAccessException e) {
+            }
+            catch (IllegalAccessException e)
+            {
                 e.printStackTrace();
                 return 0;
             }

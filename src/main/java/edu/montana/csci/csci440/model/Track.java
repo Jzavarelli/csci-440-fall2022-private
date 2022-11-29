@@ -17,7 +17,6 @@ import java.util.List;
 
 public class Track extends Model
 {
-
     private Long trackId;
     private Long albumId;
     private Long mediaTypeId;
@@ -64,6 +63,7 @@ public class Track extends Model
                      " WHERE TrackId=?"))
         {
             stmt.setLong(1, i);
+
             ResultSet results = stmt.executeQuery();
             if (results.next())
             {
@@ -120,7 +120,6 @@ public class Track extends Model
     public Album getAlbum() {
         return Album.find(albumId);
     }
-
     public MediaType getMediaType() {
         return null;
     }
@@ -137,6 +136,7 @@ public class Track extends Model
                              " WHERE tracks.TrackId=?"))
         {
             stmt.setLong(1, this.getTrackId());
+
             ResultSet results = stmt.executeQuery();
             List<Playlist> resultList = new LinkedList<>();
 
@@ -217,11 +217,11 @@ public class Track extends Model
         this.genreId = genreId;
     }
 
-    // TODO implement more efficiently
+    // COMPLETE implement more efficiently
     //  hint: cache on this model object
     public String getArtistName() { return artistName; }
 
-    // TODO implement more efficiently
+    // COMPLETE implement more efficiently
     //  hint: cache on this model object
     public String getAlbumTitle() { return albumTitle; }
 
@@ -254,8 +254,6 @@ public class Track extends Model
             query += " AND Milliseconds>?";
             args.add(minRuntime);
         }
-
-
         //  include the limit (you should include the page too :)
         // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
         int offsetNum = (page-1) * count;
@@ -266,52 +264,74 @@ public class Track extends Model
         args.add(offsetNum);
 
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            for (int i = 0; i < args.size(); i++) {
+             PreparedStatement stmt = conn.prepareStatement(query))
+        {
+            for (int i = 0; i < args.size(); i++)
+            {
                 Object arg = args.get(i);
                 stmt.setObject(i + 1, arg);
             }
             ResultSet results = stmt.executeQuery();
             List<Track> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new Track(results));
             }
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
 
-    public static List<Track> search(int page, int count, String orderBy, String search) {
+    public static List<Track> search(int page, int count, String orderBy, String search)
+    {
         String query = "SELECT * FROM tracks WHERE name LIKE ? LIMIT ?";
         search = "%" + search + "%";
+
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement stmt = conn.prepareStatement(query))
+        {
             stmt.setString(1, search);
             stmt.setInt(2, count);
+
             ResultSet results = stmt.executeQuery();
             List<Track> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new Track(results));
             }
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
 
-    public static List<Track> forAlbum(Long albumId) {
+    public static List<Track> forAlbum(Long albumId)
+    {
         String query = "SELECT * FROM tracks WHERE AlbumId=?";
+
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement stmt = conn.prepareStatement(query))
+        {
             stmt.setLong(1, albumId);
+
             ResultSet results = stmt.executeQuery();
             List<Track> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new Track(results));
             }
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
@@ -335,9 +355,7 @@ public class Track extends Model
                              " JOIN artists ON albums.ArtistId = artists.ArtistId" +
                              " ORDER BY " + orderBy + " LIMIT ? OFFSET ?"))
         {
-
             int offsetNum = (page - 1) * count; // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
-
             stmt.setInt(1, count);
             stmt.setInt(2, offsetNum);
 
@@ -394,7 +412,9 @@ public class Track extends Model
             {
                 throw new RuntimeException(sqlException);
             }
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
@@ -424,22 +444,31 @@ public class Track extends Model
                 redisClient.set(REDIS_CACHE_KEY, "gamer");
 
                 return true;
-            } catch (SQLException sqlException) {
+            }
+            catch (SQLException sqlException)
+            {
                 throw new RuntimeException(sqlException);
             }
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
 
     @Override
-    public void delete() {
+    public void delete()
+    {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "DELETE FROM tracks WHERE TrackId=?")) {
+                     "DELETE FROM tracks WHERE TrackId=?"))
+        {
             stmt.setLong(1, getTrackId());
+
             stmt.executeUpdate();
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }

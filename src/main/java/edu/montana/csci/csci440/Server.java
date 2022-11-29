@@ -11,9 +11,11 @@ import java.util.List;
 
 import static spark.Spark.*;
 
-class Server {
+class Server
+{
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
 
         /* ========================================================================= */
         /* Poor Mans Rails Implementation                                            */
@@ -26,6 +28,7 @@ class Server {
         get("/", (req, resp) -> {
             Web.message("SQL Is Awesome");
             return Web.renderTemplate("templates/index.vm");
+
         });
 
         /* ========================================================================= */
@@ -42,8 +45,5 @@ class Server {
         EmployeesController.init();
         CustomersController.init();
         InvoicesController.init();
-
-
     }
-
 }

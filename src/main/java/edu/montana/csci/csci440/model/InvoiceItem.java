@@ -2,8 +2,8 @@ package edu.montana.csci.csci440.model;
 
 import java.math.BigDecimal;
 
-public class InvoiceItem extends Model {
-
+public class InvoiceItem extends Model
+{
     Long invoiceLineId;
     Long invoiceId;
     Long trackId;

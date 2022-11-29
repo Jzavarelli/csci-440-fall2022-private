@@ -1,7 +1,6 @@
 package edu.montana.csci.csci440.model;
 
 import edu.montana.csci.csci440.util.DB;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,15 +9,17 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Playlist extends Model {
-
+public class Playlist extends Model
+{
     Long playlistId;
     String name;
 
-    public Playlist() {
+    public Playlist()
+    {
     }
 
-    public Playlist(ResultSet results) throws SQLException {
+    public Playlist(ResultSet results) throws SQLException
+    {
         name = results.getString("Name");
         playlistId = results.getLong("PlaylistId");
     }
@@ -26,7 +27,7 @@ public class Playlist extends Model {
 
     public List<Track> getTracks()
     {
-        // TODO implement, order by track name
+        // COMPLETE implement, order by track name
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
                      "SELECT tracks.Name AS Name, Milliseconds, Bytes, UnitPrice, tracks.TrackId, tracks.AlbumId, MediaTypeId, GenreId, artists.Name AS ArtistName, Title" +
@@ -40,7 +41,9 @@ public class Playlist extends Model {
         {
             ResultSet results = stmt.executeQuery();
             List<Track> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new Track(results));
             }
             return resultList;
@@ -67,38 +70,50 @@ public class Playlist extends Model {
         return all(0, Integer.MAX_VALUE);
     }
 
-    public static List<Playlist> all(int page, int count) {
+    public static List<Playlist> all(int page, int count)
+    {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT * FROM playlists LIMIT ? OFFSET ?"
-             )) {
-
+                     "SELECT * FROM playlists LIMIT ? OFFSET ?"))
+        {
             int offsetNum = (page - 1) * count; // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
 
             stmt.setInt(1, count);
             stmt.setInt(2, offsetNum);
             ResultSet results = stmt.executeQuery();
             List<Playlist> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new Playlist(results));
             }
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
 
-    public static Playlist find(int i) {
+    public static Playlist find(int i)
+    {
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM playlists WHERE PlaylistId=?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM playlists WHERE PlaylistId=?"))
+        {
             stmt.setLong(1, i);
             ResultSet results = stmt.executeQuery();
-            if (results.next()) {
+
+            if (results.next())
+            {
                 return new Playlist(results);
-            } else {
+            }
+            else
+            {
                 return null;
             }
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }

@@ -10,12 +10,13 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MediaType extends Model {
-
+public class MediaType extends Model
+{
     private Long mediaTypeId;
     private String name;
 
-    private MediaType(ResultSet results) throws SQLException {
+    private MediaType(ResultSet results) throws SQLException
+    {
         name = results.getString("Name");
         mediaTypeId = results.getLong("MediaTypeId");
     }
@@ -32,20 +33,24 @@ public class MediaType extends Model {
         this.name = name;
     }
 
-    public static List<MediaType> all() {
+    public static List<MediaType> all()
+    {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT * FROM media_types"
-             )) {
+                     "SELECT * FROM media_types"))
+        {
             ResultSet results = stmt.executeQuery();
             List<MediaType> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new MediaType(results));
             }
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
-
 }

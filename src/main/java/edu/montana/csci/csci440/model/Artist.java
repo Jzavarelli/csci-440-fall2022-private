@@ -11,15 +11,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Artist extends Model {
-
+public class Artist extends Model
+{
     Long artistId;
     String name;
-
     String oldName;
 
-    public Artist() {
-    }
+    public Artist() {}
 
     private Artist(ResultSet results) throws SQLException
     {
@@ -30,15 +28,12 @@ public class Artist extends Model {
     public List<Album> getAlbums(){
         return Album.getForArtist(artistId);
     }
-
     public Long getArtistId() {
         return artistId;
     }
-
     public void setArtist(Artist artist) {
         this.artistId = artist.getArtistId();
     }
-
     public String getName() {
         return name;
     }
@@ -60,13 +55,13 @@ public class Artist extends Model {
                      "SELECT * FROM artists LIMIT ? OFFSET ?"
              ))
         {
-
             int offsetNum = (page - 1) * count; // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
-
             stmt.setInt(1, count);
             stmt.setInt(2, offsetNum);
+
             ResultSet results = stmt.executeQuery();
             List<Artist> resultList = new LinkedList<>();
+
             while (results.next())
             {
                 resultList.add(new Artist(results));
@@ -79,17 +74,25 @@ public class Artist extends Model {
         }
     }
 
-    public static Artist find(long i) {
+    public static Artist find(long i)
+    {
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM artists WHERE ArtistId=?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM artists WHERE ArtistId=?"))
+        {
             stmt.setLong(1, i);
+
             ResultSet results = stmt.executeQuery();
-            if (results.next()) {
+            if (results.next())
+            {
                 return new Artist(results);
-            } else {
+            }
+            else
+            {
                 return null;
             }
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
@@ -101,14 +104,12 @@ public class Artist extends Model {
         if (name == null || "".equals(name)) {
             addError("Artist name can't be null or blank!");
         }
-
         return !hasErrors();
     }
 
     @Override
     public boolean update()
     {
-
         if (verify())
         {
             try (Connection conn = DB.connect();
@@ -118,8 +119,8 @@ public class Artist extends Model {
                 stmt.setString(1, this.getName());
                 stmt.setLong(2, this.getArtistId());
                 stmt.setString(3, oldName);
-                int updatedCount = stmt.executeUpdate();
 
+                int updatedCount = stmt.executeUpdate();
                 if (updatedCount == 1)
                 {
                     return true;
@@ -141,19 +142,27 @@ public class Artist extends Model {
     }
 
     @Override
-    public boolean create() {
-        if (verify()) {
+    public boolean create()
+    {
+        if (verify())
+        {
             try (Connection conn = DB.connect();
                  PreparedStatement stmt = conn.prepareStatement(
-                         "INSERT INTO artists (Name) VALUES (?)")) {
+                         "INSERT INTO artists (Name) VALUES (?)"))
+            {
                 stmt.setString(1, getName());
+
                 stmt.executeUpdate();
                 artistId = DB.getLastID(conn);
                 return true;
-            } catch (SQLException sqlException) {
+            }
+            catch (SQLException sqlException)
+            {
                 throw new RuntimeException(sqlException);
             }
-        } else {
+        }
+        else
+        {
             return false;
         }
     }

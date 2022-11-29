@@ -10,16 +10,16 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Album extends Model {
-
+public class Album extends Model
+{
     Long albumId;
     Long artistId;
     String title;
 
-    public Album() {
-    }
+    public Album() {}
 
-    private Album(ResultSet results) throws SQLException {
+    private Album(ResultSet results) throws SQLException
+    {
         title = results.getString("Title");
         albumId = results.getLong("AlbumId");
         artistId = results.getLong("ArtistId");
@@ -69,9 +69,9 @@ public class Album extends Model {
              ))
         {
             int offsetNum = (page - 1) * count; // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
-
             stmt.setInt(1, count);
             stmt.setInt(2, offsetNum);
+
             ResultSet results = stmt.executeQuery();
             List<Album> resultList = new LinkedList<>();
 
@@ -87,17 +87,25 @@ public class Album extends Model {
         }
     }
 
-    public static Album find(long i) {
+    public static Album find(long i)
+    {
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM albums WHERE AlbumId=?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM albums WHERE AlbumId=?"))
+        {
             stmt.setLong(1, i);
+
             ResultSet results = stmt.executeQuery();
-            if (results.next()) {
+            if (results.next())
+            {
                 return new Album(results);
-            } else {
+            }
+            else
+            {
                 return null;
             }
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
@@ -127,6 +135,7 @@ public class Album extends Model {
                 stmt.setString(1, getTitle());
                 stmt.setLong(2, getArtistId());
                 stmt.setLong(3, getAlbumId());
+
                 stmt.executeUpdate();
                 return true;
             }
@@ -148,14 +157,17 @@ public class Album extends Model {
         {
             try (Connection conn = DB.connect();
                  PreparedStatement stmt = conn.prepareStatement(
-                         "INSERT INTO albums (Title, ArtistId) VALUES (?, ?)")) {
+                         "INSERT INTO albums (Title, ArtistId) VALUES (?, ?)"))
+            {
                 stmt.setString(1, getTitle());
                 stmt.setLong(2, getArtistId());
-                stmt.executeUpdate();
 
+                stmt.executeUpdate();
                 albumId = DB.getLastID(conn);
                 return true;
-            } catch (SQLException sqlException) {
+            }
+            catch (SQLException sqlException)
+            {
                 throw new RuntimeException(sqlException);
             }
         }
@@ -172,8 +184,8 @@ public class Album extends Model {
                      " JOIN artists ON albums.ArtistId = artists.ArtistId" +
                      " WHERE artists.ArtistId=?"))
         {
-
             stmt.setLong(1, artistId);
+
             ResultSet results = stmt.executeQuery();
             List<Album> resultList = new LinkedList<>();
 
@@ -188,5 +200,4 @@ public class Album extends Model {
             throw new RuntimeException(sqlException);
         }
     }
-
 }

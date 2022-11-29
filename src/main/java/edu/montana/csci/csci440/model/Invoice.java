@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Invoice extends Model {
-
+public class Invoice extends Model
+{
     Long invoiceId;
     String billingAddress;
     String billingCity;
@@ -19,11 +19,10 @@ public class Invoice extends Model {
     String billingPostalCode;
     BigDecimal total;
 
-    public Invoice() {
-        // new employee for insert
-    }
+    public Invoice() {}
 
-    private Invoice(ResultSet results) throws SQLException {
+    private Invoice(ResultSet results) throws SQLException
+    {
         billingAddress = results.getString("BillingAddress");
         billingCity = results.getString("BillingCity");
         billingState = results.getString("BillingState");
@@ -33,7 +32,7 @@ public class Invoice extends Model {
         invoiceId = results.getLong("InvoiceId");
     }
 
-    public List<InvoiceItem> getInvoiceItems()
+    public List<InvoiceItem> getInvoiceItems() // TODO - Properly Write GetInvoice to Return to Show.vm
     {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM invoices" +
@@ -56,96 +55,69 @@ public class Invoice extends Model {
         }
 
     }
-    public Customer getCustomer() {
-        return null;
-    }
-
-    public Long getInvoiceId() {
-        return invoiceId;
-    }
-
-    public String getBillingAddress() {
-        return billingAddress;
-    }
-
-    public void setBillingAddress(String billingAddress) {
-        this.billingAddress = billingAddress;
-    }
-
+    public Customer getCustomer() { return null; } // TODO - Setup Get Customer
+    public Long getInvoiceId() { return invoiceId; }
+    public String getBillingAddress() { return billingAddress; }
+    public void setBillingAddress(String billingAddress) { this.billingAddress = billingAddress; }
     public String getBillingCity() { return billingCity; }
-
     public void setBillingCity(String billingCity) { this.billingCity = billingCity; }
+    public String getBillingState() { return billingState; }
+    public void setBillingState(String billingState) { this.billingState = billingState; }
+    public String getBillingCountry() { return billingCountry; }
+    public void setBillingCountry(String billingCountry) { this.billingCountry = billingCountry; }
+    public String getBillingPostalCode() { return billingPostalCode; }
+    public void setBillingPostalCode(String billingPostalCode) { this.billingPostalCode = billingPostalCode; }
+    public BigDecimal getTotal() { return total; }
+    public void setTotal(BigDecimal total) { this.total = total; }
 
-    public String getBillingState() {
-        return billingState;
-    }
+    public static List<Invoice> all() { return all(0, Integer.MAX_VALUE); }
 
-    public void setBillingState(String billingState) {
-        this.billingState = billingState;
-    }
-
-    public String getBillingCountry() {
-        return billingCountry;
-    }
-
-    public void setBillingCountry(String billingCountry) {
-        this.billingCountry = billingCountry;
-    }
-
-    public String getBillingPostalCode() {
-        return billingPostalCode;
-    }
-
-    public void setBillingPostalCode(String billingPostalCode) {
-        this.billingPostalCode = billingPostalCode;
-    }
-
-    public BigDecimal getTotal() {
-        return total;
-    }
-
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
-
-    public static List<Invoice> all() {
-        return all(0, Integer.MAX_VALUE);
-    }
-
-    public static List<Invoice> all(int page, int count) {
+    public static List<Invoice> all(int page, int count)
+    {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT * FROM invoices LIMIT ? OFFSET ?"
-             )) {
-
+                     "SELECT * FROM invoices LIMIT ? OFFSET ?"))
+        {
             int offsetNum = (page - 1) * count; // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
-
             stmt.setInt(1, count);
             stmt.setInt(2, offsetNum);
+
             ResultSet results = stmt.executeQuery();
             List<Invoice> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new Invoice(results));
             }
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
 
-    public static Invoice find(long invoiceId) {
+    public static Invoice find(long invoiceId)
+    {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM invoices" +
                      " JOIN invoice_items ON invoices.InvoiceId = invoice_items.InvoiceId" +
-                     " WHERE invoices.InvoiceId=?")) {
+                     " WHERE invoices.InvoiceId=?"))
+        {
             stmt.setLong(1, invoiceId);
+
             ResultSet results = stmt.executeQuery();
-            if (results.next()) {
+            if (results.next())
+            {
                 return new Invoice(results);
-            } else {
+            }
+            else
+            {
                 return null;
             }
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }

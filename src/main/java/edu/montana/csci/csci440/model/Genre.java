@@ -9,12 +9,13 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Genre extends Model {
-
+public class Genre extends Model
+{
     private Long genreId;
     private String name;
 
-    private Genre(ResultSet results) throws SQLException {
+    private Genre(ResultSet results) throws SQLException
+    {
         name = results.getString("Name");
         genreId = results.getLong("GenreId");
     }
@@ -31,21 +32,24 @@ public class Genre extends Model {
         this.name = name;
     }
 
-    public static List<Genre> all() {
+    public static List<Genre> all()
+    {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT * FROM genres"
-             )) {
+                     "SELECT * FROM genres"))
+        {
             ResultSet results = stmt.executeQuery();
             List<Genre> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new Genre(results));
             }
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
-
-
 }

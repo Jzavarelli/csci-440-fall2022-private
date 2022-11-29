@@ -10,8 +10,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Customer extends Model {
-
+public class Customer extends Model
+{
     private Long customerId;
     private Long supportRepId;
     private String firstName;
@@ -26,7 +26,8 @@ public class Customer extends Model {
         return Collections.emptyList();
     }
 
-    private Customer(ResultSet results) throws SQLException {
+    private Customer(ResultSet results) throws SQLException
+    {
         firstName = results.getString("FirstName");
         lastName = results.getString("LastName");
         customerId = results.getLong("CustomerId");
@@ -56,54 +57,74 @@ public class Customer extends Model {
         return all(0, Integer.MAX_VALUE);
     }
 
-    public static List<Customer> all(int page, int count) {
+    public static List<Customer> all(int page, int count)
+    {
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement(
-                     "SELECT * FROM customers LIMIT ? OFFSET ?"
-             )) {
-
+                     "SELECT * FROM customers LIMIT ? OFFSET ?"))
+        {
             int offsetNum = (page - 1) * count; // Page # - One and Multiply By One Hundred --> (i.e. 1 - > 0, 2 - > 100, 3 - > 200, etc.)
-
             stmt.setInt(1, count);
             stmt.setInt(2, offsetNum);
+
             ResultSet results = stmt.executeQuery();
             List<Customer> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new Customer(results));
             }
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
 
-    public static Customer find(long customerId) {
+    public static Customer find(long customerId)
+    {
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM customers WHERE CustomerId=?")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM customers WHERE CustomerId=?"))
+        {
             stmt.setLong(1, customerId);
+
             ResultSet results = stmt.executeQuery();
-            if (results.next()) {
+            if (results.next())
+            {
                 return new Customer(results);
-            } else {
+            }
+            else
+            {
                 return null;
             }
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
 
-    public static List<Customer> forEmployee(long employeeId) {
+    public static List<Customer> forEmployee(long employeeId)
+    {
         String query = "SELECT * FROM customers WHERE SupportRepId=?";
+
         try (Connection conn = DB.connect();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement stmt = conn.prepareStatement(query))
+        {
             stmt.setLong(1, employeeId);
+
             ResultSet results = stmt.executeQuery();
             List<Customer> resultList = new LinkedList<>();
-            while (results.next()) {
+
+            while (results.next())
+            {
                 resultList.add(new Customer(results));
             }
             return resultList;
-        } catch (SQLException sqlException) {
+        }
+        catch (SQLException sqlException)
+        {
             throw new RuntimeException(sqlException);
         }
     }
