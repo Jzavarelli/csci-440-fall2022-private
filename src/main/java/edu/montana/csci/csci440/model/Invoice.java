@@ -21,7 +21,7 @@ public class Invoice extends Model
 
     public Invoice() {}
 
-    private Invoice(ResultSet results) throws SQLException
+    public Invoice(ResultSet results) throws SQLException
     {
         billingAddress = results.getString("BillingAddress");
         billingCity = results.getString("BillingCity");
@@ -37,15 +37,15 @@ public class Invoice extends Model
         try (Connection conn = DB.connect();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM invoices" +
                      " JOIN invoice_items ON invoices.InvoiceId = invoice_items.InvoiceId" +
-                     " GROUP BY invoices.InvoiceId"))
+                     " WHERE invoice_items.InvoiceId = ?"))
         {
-
+            stmt.setLong(1, invoiceId);
             ResultSet results = stmt.executeQuery();
             List<InvoiceItem> resultList = new LinkedList<>();
 
             while (results.next())
             {
-                resultList.add(new InvoiceItem());
+                resultList.add(new InvoiceItem(results));
             }
             return resultList;
         }

@@ -426,7 +426,7 @@ public class Track extends Model
         {
             try (Connection conn = DB.connect();
                  PreparedStatement stmt = conn.prepareStatement(
-                         "INSERT INTO tracks (Name, MediaTypeId, GenreId, Milliseconds, Bytes, UnitPrice) VALUES (?, ?, ?, ?, ?, ?)"))
+                         "INSERT INTO tracks (Name, MediaTypeId, GenreId, Milliseconds, Bytes, UnitPrice, AlbumId) VALUES (?, ?, ?, ?, ?, ?, ?)"))
             {
 
                 stmt.setString(1, getName());
@@ -435,6 +435,7 @@ public class Track extends Model
                 stmt.setLong(4, getMilliseconds());
                 stmt.setLong(5, getBytes());
                 stmt.setBigDecimal(6, getUnitPrice());
+                stmt.setLong(7, getAlbumId());
 
                 stmt.executeUpdate();
                 trackId = DB.getLastID(conn);

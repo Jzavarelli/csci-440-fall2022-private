@@ -22,8 +22,27 @@ public class Customer extends Model
          return Employee.find(supportRepId);
     }
 
-    public List<Invoice> getInvoices(){
-        return Collections.emptyList();
+    public List<Invoice> getInvoices()
+    {
+        try (Connection conn = DB.connect();
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM invoices" +
+                     " JOIN customers ON invoices.CustomerId = customers.CustomerId" +
+                     " WHERE customers.CustomerId = ?"))
+        {
+            stmt.setLong(1, customerId);
+            ResultSet results = stmt.executeQuery();
+            List<Invoice> resultList = new LinkedList<>();
+
+            while (results.next())
+            {
+                resultList.add(new Invoice(results));
+            }
+            return resultList;
+        }
+        catch (SQLException sqlException)
+        {
+            throw new RuntimeException(sqlException);
+        }
     }
 
     private Customer(ResultSet results) throws SQLException

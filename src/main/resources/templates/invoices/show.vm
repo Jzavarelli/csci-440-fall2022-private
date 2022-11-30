@@ -56,8 +56,8 @@
             <td>$!item.InvoiceLineId</td>
             <td>$!item.TrackId</td>
             <td>$!item.Track.Name</td>
-            <td>$!item.Track.Artist</td>
-            <td>$!item.Track.Album</td>
+            <td>$!item.Track.ArtistName</td>
+            <td>$!item.Track.AlbumTitle</td>
             <td>$!item.UnitPrice</td>
             <td>$!item.Quantity</td>
         </tr>
