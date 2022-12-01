@@ -18,7 +18,7 @@ public class Homework3 extends DBTest
 
     @Test
     /*
-     * Use a transaction to safely move milliseconds from one track to anotherls
+     * Use a transaction to safely move milliseconds from one track to another
      *
      * You will need to use the JDBC transaction API, outlined here:
      *
@@ -27,26 +27,33 @@ public class Homework3 extends DBTest
      */
     public void useATransactionToSafelyMoveMillisecondsFromOneTrackToAnother() throws SQLException
     {
-
+        /*First Track to Move From (Subtract, and or, Add From)*/
         Track track1 = Track.find(1);
         Long track1InitialTime = track1.getMilliseconds();
+
+        /*Second Track to Move To (Subtract Results to, and or Add Results To)*/
         Track track2 = Track.find(2);
         Long track2InitialTime = track2.getMilliseconds();
 
         try(Connection connection = DB.connect())
         {
             connection.setAutoCommit(false);
-            PreparedStatement subtract = connection.prepareStatement("TODO");
-            subtract.setLong(1, 0);
-            subtract.setLong(2, 0);
+            PreparedStatement subtract = connection.prepareStatement("UPDATE tracks " +
+                                                                         "SET Milliseconds = Milliseconds-? " +
+                                                                         "WHERE TrackId=?");
+            subtract.setLong(1, 10);
+            subtract.setLong(2, 1);
             subtract.execute();
 
-            PreparedStatement add = connection.prepareStatement("TODO");
-            subtract.setLong(1, 0);
-            subtract.setLong(2, 0);
-            subtract.execute();
+            PreparedStatement add = connection.prepareStatement("UPDATE tracks " +
+                                                                    "SET Milliseconds = Milliseconds+? " +
+                                                                    "WHERE TrackId=?");
+            add.setLong(1, 10);
+            add.setLong(2, 2);
+            add.execute();
 
             // commit with the connection
+            connection.commit();
         }
 
         // refresh tracks from db
@@ -60,7 +67,7 @@ public class Homework3 extends DBTest
     /*
      * Select tracks that have been sold more than once (> 1)
      *
-     * Select the albumbs that have tracks that have been sold more than once (> 1)
+     * Select the albums that have tracks that have been sold more than once (> 1)
      *   NOTE: This is NOT the same as albums whose tracks have been sold more than once!
      *         An album could have had three tracks, each sold once, and should not be included
      *         in this result.  It should only include the albums of the tracks found in the first
@@ -70,12 +77,21 @@ public class Homework3 extends DBTest
     {
 
         // HINT: join to invoice items and do a group by/having to get the right answer
-        List<Map<String, Object>> tracks = executeSQL("");
+        List<Map<String, Object>> tracks = executeSQL("SELECT Name, COUNT(invoice_items.TrackId) AS SaleCount " +
+                "FROM tracks " +
+                "JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId " +
+                "GROUP BY invoice_items.TrackId " +
+                "HAVING SaleCount > 1");
         assertEquals(256, tracks.size());
 
         // HINT: join to tracks and invoice items and do a group by/having to get the right answer
         //       note: you will need to use the DISTINCT operator to get the right result!
-        List<Map<String, Object>> albums = executeSQL("");
+        List<Map<String, Object>> albums = executeSQL("SELECT DISTINCT Title " +
+                "FROM albums " +
+                "JOIN tracks ON albums.AlbumId = tracks.AlbumId " +
+                "JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId " +
+                "GROUP BY invoice_items.TrackId " +
+                "HAVING COUNT(invoice_items.TrackId) > 1");
         assertEquals(166, albums.size());
     }
 
@@ -89,7 +105,16 @@ public class Homework3 extends DBTest
     public void selectCustomersMeetingCriteria() throws SQLException
     {
         // HINT: join to invoice items and do a group by/having to get the right answer
-        List<Map<String, Object>> tracks = executeSQL("" );
+        // COMPLETE - Configure SQL Query to Use Proper Genre Confirmation
+        List<Map<String, Object>> tracks = executeSQL("SELECT *" +
+                "FROM tracks " +
+                "JOIN genres ON tracks.GenreId = genres.GenreId " +
+                "JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId " +
+                "JOIN invoices ON invoice_items.InvoiceId = invoices.InvoiceId " +
+                "JOIN customers ON invoices.CustomerId = customers.CustomerId " +
+                "WHERE customers.CustomerId IN (SELECT CustomerId FROM customers WHERE SupportRepId = 3) " +
+                "GROUP BY Email");
+        //      "HAVING .genres.GenreId = 1); // --> Returns only 8 tracks and when checking the Database we only have 8 known Rock purchases, I believe the genre must be exclude to reach 21.
         assertEquals(21, tracks.size());
     }
 

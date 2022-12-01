@@ -288,7 +288,11 @@ public class Track extends Model
 
     public static List<Track> search(int page, int count, String orderBy, String search)
     {
-        String query = "SELECT * FROM tracks WHERE name LIKE ? LIMIT ?";
+        String query = "SELECT tracks.Name AS Name, Milliseconds, Bytes, UnitPrice, TrackId, tracks.AlbumId, MediaTypeId, GenreId, artists.Name AS ArtistName, Title " +
+                       "FROM tracks " +
+                       "JOIN albums ON tracks.AlbumId = albums.AlbumId " +
+                       "JOIN artists ON albums.ArtistId = artists.ArtistId " +
+                       "WHERE ArtistName LIKE ? LIMIT ?";
         search = "%" + search + "%";
 
         try (Connection conn = DB.connect();
